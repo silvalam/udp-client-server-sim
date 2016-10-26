@@ -1,22 +1,23 @@
+# Authors: Sylvia Lam, Brian LaBar
+
 # Import time library to have access to system time
-import time
+from datetime import datetime
 from socket import *
 
 # Send 10 pings
 for i in range(0,9):
     # Create a UDP socket for server
-    clientSocket = socket(socket.AF_INET, socket.SOCK_DGRAM)
+    clientSocket = socket(AF_INET, SOCK_DGRAM)
     # Set timeout for 1sec for reply
     clientSocket.settimeout(1)
     # Get hostname of localmachine
-    host = socket.gethostname()
+    host = "127.0.0.1"
     # Reserve same port that server has binded to
     port = 12000
     # Start timer because round trip time starting
-    t0 = time.time()
-
+    t0 = (datetime.now()).microsecond
     # Set message 
-    dayOfWeek = datetime.datetime.fromtimestamp(t0).strftime("%A")
+    dayOfWeek = datetime.now().strftime("%A")
     
     if dayOfWeek == "Monday":
         dayOfWeek = "M"
@@ -33,26 +34,23 @@ for i in range(0,9):
     elif dayOfWeek == "Sunday":
         dayOfWeek = "U"
 
-    messagedate = datetime.datetime.fromtimestamp(t0).strftime("%Y-%m-%d")
-    mesagetime = datetime.datetime.fromtimestamp(t0).strftime("%H:%M")
-    message = "Ping" + " " + (i+1) + " " + messagedate + " " + dayOfWeek + " " + messagetime + " " + "UTC"
+    messagedate = datetime.now().strftime("%Y-%m-%d")
+    messagetime = datetime.now().strftime("%H:%M")
+    message = "Ping" + " " + str((i+1)) + " " + messagedate + " " + dayOfWeek + " " + messagetime + " " + "UTC"
     # Send message
     clientSocket.sendto(message, (host, port))
     try:
         # Receive response from server
         modifiedMessage, server = clientSocket.recvfrom(1024)
         # Stop timer because round trip time done
-        t1 = time.time()
+        t1 = (datetime.now()).microsecond
         # Calculate print the round trip time in milliseconds of each packet if server respond
-        rtt = t1 - t0
-        # Abbreviate day of the week
-        dayofweek = datetime.date.today().strftime("%A")
-    
+        rtt = float(t1 - t0) / 1000
         # Print client ping + #, server response, and rtt
-        print "%s\n" % (message)
-        print "%s\n" % (modifiedMessage)
-        print "RTT: %d\n" % (rtt)
+        print "%s" % (message)
+        print "%s" % (modifiedMessage)
+        print "RTT: %.3f\n" % (rtt)
     # If no response from server within timeout then print
-    except socket.timeout:
-        print "%s\n" % (message)
+    except timeout:
+        print "%s" % (message)
         print "Request timed out\n"
