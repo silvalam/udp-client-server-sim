@@ -5,7 +5,7 @@ from datetime import datetime
 from socket import *
 
 # Send 10 pings
-for i in range(0,9):
+for i in range(10):
     # Create a UDP socket for server
     clientSocket = socket(AF_INET, SOCK_DGRAM)
     # Set timeout for 1sec for reply
@@ -36,7 +36,7 @@ for i in range(0,9):
 
     messagedate = datetime.now().strftime("%Y-%m-%d")
     messagetime = datetime.now().strftime("%H:%M")
-    message = "Ping" + " " + str((i+1)) + " " + messagedate + " " + dayOfWeek + " " + messagetime + " " + "UTC"
+    message = "Ping" + " " + str(i+1) + " " + messagedate + " " + dayOfWeek + " " + messagetime + " " + "UTC"
     # Send message
     clientSocket.sendto(message, (host, port))
     try:
@@ -45,7 +45,7 @@ for i in range(0,9):
         # Stop timer because round trip time done
         t1 = (datetime.now()).microsecond
         # Calculate print the round trip time in milliseconds of each packet if server respond
-        rtt = float(t1 - t0) / 1000
+        rtt = (t1 - t0) / float(1000)
         # Print client ping + #, server response, and rtt
         print "%s" % (message)
         print "%s" % (modifiedMessage)
